@@ -679,9 +679,8 @@
           <!-- OVERVIEW -->
           <div id="vp-overview" class="tab-panel">
             <p class="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-              A virtual patient that responds to verbal and non-verbal cues, enabling flexible, repeatable
-              clinical-skills practice without scheduling standardized actors. Focus: diverse patient personas,
-              emotional intelligence, and real-time feedback on communication skills.
+              We present an emotion-aware, LLM-orchestrated Virtual Patient (VP) system for high-fidelity clinical communication training. A multimodal perception stack fuses streaming transformer ASR transcripts, prosodic features (F0, energy, speaking rate) mapped to Valence/Arousal/Dominance, and vision signals (MediaPipe/OpenCV landmarks and DeepFace expressions). Signals are temporally aligned and aggregated into a latent interaction state. A persona-conditioned dialogue policy built on a tool-augmented LLM generates patient utterances and real-time coaching while enforcing controllable style and safety constraints. The Unity client renders a lifelike avatar with neural TTS and viseme-synchronized animations, supporting configurable symptoms and affect dynamics. We compute SOFTEN (smile, open posture, forward lean, tone, eye contact, nod) and other nonverbal metrics, exposing interpretable dashboards and reproducible logs. Privacy is addressed via on-device redaction, data minimization, and role-segmented storage. Planned evaluations compare VP-augmented training to actor-only baselines and include ablations over modalities and prompting strategies.
+              This work contributes a modular multimodal framework for human AI training dialogues and reproducible metrics for communication, empathy, and clinical reasoning. The system supports configurable patient personas and scenarios and provides dashboards that summarize performance over time longitudinally.
             </p>
           </div>
     
