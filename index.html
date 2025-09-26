@@ -72,6 +72,76 @@
     })();
   </script>
 </head>
+
+<script>
+(() => {
+  let activeModal = null;
+  let lastFocused = null;
+
+  const getFocusable = (root) =>
+    Array.from(root.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'))
+      .filter(el => el.offsetParent !== null);
+
+  const openModal = (id) => {
+    const m = document.getElementById(id);
+    if (!m) return;
+    lastFocused = document.activeElement;
+    m.classList.remove('hidden');
+    m.classList.add('flex');
+    document.body.classList.add('overflow-hidden'); // lock scroll
+    activeModal = m;
+
+    const focusTarget = m.querySelector('[data-autofocus]') || getFocusable(m)[0];
+    if (focusTarget) focusTarget.focus();
+  };
+
+  const closeModal = () => {
+    if (!activeModal) return;
+    activeModal.classList.add('hidden');
+    activeModal.classList.remove('flex');
+    document.body.classList.remove('overflow-hidden');
+    if (lastFocused) lastFocused.focus();
+    activeModal = null;
+  };
+
+  // Open/close handlers
+  document.addEventListener('click', (e) => {
+    const openBtn = e.target.closest('[data-modal-open]');
+    if (openBtn) {
+      e.preventDefault();
+      openModal(openBtn.getAttribute('data-modal-open'));
+      return;
+    }
+    if (e.target.closest('[data-modal-close]')) {
+      e.preventDefault();
+      closeModal();
+      return;
+    }
+    // Click on backdrop closes
+    if (activeModal && e.target === activeModal) closeModal();
+  });
+
+  // Esc + focus trap
+  document.addEventListener('keydown', (e) => {
+    if (!activeModal) return;
+
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      closeModal();
+    } else if (e.key === 'Tab') {
+      const f = getFocusable(activeModal);
+      if (f.length === 0) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    }
+  });
+})();
+</script>
+
 <body class="bg-white text-gray-800 dark:bg-neutral-950 dark:text-neutral-100 font-body selection:bg-brand-300/40">
   <!-- Skip link -->
   <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 bg-brand-500 text-white px-3 py-2 rounded-lg">Skip to content</a>
@@ -168,21 +238,36 @@
             <div class="h-40 rounded-xl bg-gradient-to-br from-brand-500/20 to-amber-500/20 flex items-center justify-center text-sm text-neutral-600 dark:text-neutral-300">JD–R LLM Pipeline</div>
             <h3 class="mt-4 font-semibold text-lg">AI‑Driven Monitoring of PhD Student Well‑being</h3>
             <p class="mt-2 text-sm text-neutral-600 dark:text-neutral-400">Hierarchical information extraction and response simulation to infer JD–R factors from chats, emails, calendars, and sensors.</p>
-            <a href="#projects" class="mt-3 inline-flex text-brand-600 dark:text-brand-400 text-sm hover:underline">Learn more →</a>
+            <!-- <a href="#projects" class="mt-3 inline-flex text-brand-600 dark:text-brand-400 text-sm hover:underline">Learn more →</a> -->
+            <button
+              class="mt-3 inline-flex text-brand-600 dark:text-brand-400 text-sm hover:underline"
+              data-modal-open="modal-jdr">
+              Learn more →
+            </button>
           </article>
           <!-- Card 2 -->
           <article class="group rounded-2xl border border-neutral-200 dark:border-neutral-800 p-5 hover:shadow-mellow transition-shadow bg-white dark:bg-neutral-950 transition-transform duration-150 hover:-translate-y-1 hover:shadow-mellow">
             <div class="h-40 rounded-xl bg-gradient-to-br from-teal-500/20 to-cyan-500/20 flex items-center justify-center text-sm text-neutral-600 dark:text-neutral-300">Virtual Patient</div>
             <h3 class="mt-4 font-semibold text-lg">Emotion‑aware LLM Virtual Patient for Training</h3>
             <p class="mt-2 text-sm text-neutral-600 dark:text-neutral-400">A conversational avatar in Unity for telehealth education with facial‑expression cues and scenario authoring.</p>
-            <a href="#projects" class="mt-3 inline-flex text-brand-600 dark:text-brand-400 text-sm hover:underline">Learn more →</a>
+            <!-- <a href="#projects" class="mt-3 inline-flex text-brand-600 dark:text-brand-400 text-sm hover:underline">Learn more →</a> -->
+            <button
+              class="mt-3 inline-flex text-brand-600 dark:text-brand-400 text-sm hover:underline"
+              data-modal-open="modal-vp">
+              Learn more →
+            </button>
           </article>
           <!-- Card 3 -->
           <article class="group rounded-2xl border border-neutral-200 dark:border-neutral-800 p-5 hover:shadow-mellow transition-shadow bg-white dark:bg-neutral-950 transition-transform duration-150 hover:-translate-y-1 hover:shadow-mellow">
             <div class="h-40 rounded-xl bg-gradient-to-br from-purple-500/20 to-fuchsia-500/20 flex items-center justify-center text-sm text-neutral-600 dark:text-neutral-300">UbiComp Wearables</div>
             <h3 class="mt-4 font-semibold text-lg">Capacitive‑Sensing Garments for Social Interaction</h3>
             <p class="mt-2 text-sm text-neutral-600 dark:text-neutral-400">Custom electrode arrays and embedded sensing to classify dyadic interaction patterns beyond the wearer.</p>
-            <a href="#projects" class="mt-3 inline-flex text-brand-600 dark:text-brand-400 text-sm hover:underline">Learn more →</a>
+            <!-- <a href="#projects" class="mt-3 inline-flex text-brand-600 dark:text-brand-400 text-sm hover:underline">Learn more →</a> -->
+            <button
+              class="mt-3 inline-flex text-brand-600 dark:text-brand-400 text-sm hover:underline"
+              data-modal-open="modal-wearables">
+              Learn more →
+            </button>
           </article>
         </div>
       </div>
@@ -366,6 +451,81 @@
         </div>
       </div>
     </section>
+    <!-- Modal: JD–R -->
+    <div id="modal-jdr"
+         class="fixed inset-0 z-[60] hidden items-center justify-center p-4"
+         role="dialog" aria-modal="true" aria-labelledby="modal-jdr-title" aria-describedby="modal-jdr-desc">
+      <!-- Backdrop -->
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-modal-close></div>
+    
+      <!-- Panel -->
+      <div class="relative w-full max-w-2xl rounded-2xl bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 shadow-mellow">
+        <div class="flex items-start justify-between gap-4 p-5 border-b border-neutral-200 dark:border-neutral-800">
+          <h3 id="modal-jdr-title" class="text-lg font-semibold">AI-Driven Monitoring of PhD Student Well-being</h3>
+          <button class="rounded-lg p-2 hover:bg-neutral-100 dark:hover:bg-neutral-900" data-modal-close aria-label="Close">✕</button>
+        </div>
+        <div id="modal-jdr-desc" class="p-5 space-y-4 text-sm text-neutral-700 dark:text-neutral-300">
+          <p>Human-centered, context-aware modeling of graduate experience using multimodal signals (mobile/wearable sensing and digital interaction data) with modern LLMs.</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>Focus: HCI · UbiComp · human-centered AI</li>
+            <li>Signals: activity/location, schedules, messages, email</li>
+            <li>Methods: multimodal modeling, representation learning, evaluation</li>
+          </ul>
+        </div>
+        <div class="p-5 pt-0 flex items-center justify-end gap-3">
+          <button class="inline-flex items-center gap-2 bg-brand-600 text-white px-4 py-2 rounded-xl hover:bg-brand-700" data-modal-close data-autofocus>Close</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal: Virtual Patient -->
+    <div id="modal-vp"
+         class="fixed inset-0 z-[60] hidden items-center justify-center p-4"
+         role="dialog" aria-modal="true" aria-labelledby="modal-vp-title" aria-describedby="modal-vp-desc">
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-modal-close></div>
+      <div class="relative w-full max-w-2xl rounded-2xl bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 shadow-mellow">
+        <div class="flex items-start justify-between gap-4 p-5 border-b border-neutral-200 dark:border-neutral-800">
+          <h3 id="modal-vp-title" class="text-lg font-semibold">Emotion-Aware Virtual Patient</h3>
+          <button class="rounded-lg p-2 hover:bg-neutral-100 dark:hover:bg-neutral-900" data-modal-close aria-label="Close">✕</button>
+        </div>
+        <div id="modal-vp-desc" class="p-5 space-y-4 text-sm text-neutral-700 dark:text-neutral-300">
+          <p>Conversational avatar integrating speech, affect cues, and LLM reasoning to support realistic training scenarios.</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>Focus: interaction design, feedback, assessment</li>
+            <li>Signals: speech/text, timing, scenario context</li>
+            <li>Methods: LLM prompting, evaluation rubrics, usability</li>
+          </ul>
+        </div>
+        <div class="p-5 pt-0 flex items-center justify-end gap-3">
+          <button class="inline-flex items-center gap-2 bg-brand-600 text-white px-4 py-2 rounded-xl hover:bg-brand-700" data-modal-close data-autofocus>Close</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal: Wearables -->
+    <div id="modal-wearables"
+         class="fixed inset-0 z-[60] hidden items-center justify-center p-4"
+         role="dialog" aria-modal="true" aria-labelledby="modal-wear-title" aria-describedby="modal-wear-desc">
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-modal-close></div>
+      <div class="relative w-full max-w-2xl rounded-2xl bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 shadow-mellow">
+        <div class="flex items-start justify-between gap-4 p-5 border-b border-neutral-200 dark:border-neutral-800">
+          <h3 id="modal-wear-title" class="text-lg font-semibold">Capacitive-Sensing Wearables</h3>
+          <button class="rounded-lg p-2 hover:bg-neutral-100 dark:hover:bg-neutral-900" data-modal-close aria-label="Close">✕</button>
+        </div>
+        <div id="modal-wear-desc" class="p-5 space-y-4 text-sm text-neutral-700 dark:text-neutral-300">
+          <p>Ubiquitous sensing with custom electrodes to capture social interaction patterns beyond the wearer.</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>Focus: sensing & inference, embodied interaction</li>
+            <li>Signals: capacitive channels, movement, proximity</li>
+            <li>Methods: feature engineering, supervised modeling</li>
+          </ul>
+        </div>
+        <div class="p-5 pt-0 flex items-center justify-end gap-3">
+          <button class="inline-flex items-center gap-2 bg-brand-600 text-white px-4 py-2 rounded-xl hover:bg-brand-700" data-modal-close data-autofocus>Close</button>
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <!-- Footer -->
