@@ -75,8 +75,7 @@
 
 <script>
 (() => {
-  let activeModal = null;
-  let lastFocused = null;
+  let activeModal = null, lastFocused = null;
 
   const getFocusable = (root) =>
     Array.from(root.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'))
@@ -86,58 +85,54 @@
     const m = document.getElementById(id);
     if (!m) return;
     lastFocused = document.activeElement;
-    m.classList.remove('hidden');
-    m.classList.add('flex');
-    document.body.classList.add('overflow-hidden'); // lock scroll
+    m.classList.remove('hidden'); m.classList.add('flex');
+    document.body.classList.add('overflow-hidden');
     activeModal = m;
-
     const focusTarget = m.querySelector('[data-autofocus]') || getFocusable(m)[0];
     if (focusTarget) focusTarget.focus();
+    // Default tab active
+    const firstTab = m.querySelector('[data-tab]') || m.querySelector('.tab-btn');
+    if (firstTab) firstTab.click();
   };
 
   const closeModal = () => {
     if (!activeModal) return;
-    activeModal.classList.add('hidden');
-    activeModal.classList.remove('flex');
+    activeModal.classList.add('hidden'); activeModal.classList.remove('flex');
     document.body.classList.remove('overflow-hidden');
     if (lastFocused) lastFocused.focus();
     activeModal = null;
   };
 
-  // Open/close handlers
+  // Open/close
   document.addEventListener('click', (e) => {
     const openBtn = e.target.closest('[data-modal-open]');
-    if (openBtn) {
-      e.preventDefault();
-      openModal(openBtn.getAttribute('data-modal-open'));
-      return;
-    }
-    if (e.target.closest('[data-modal-close]')) {
-      e.preventDefault();
-      closeModal();
-      return;
-    }
-    // Click on backdrop closes
+    if (openBtn) { e.preventDefault(); openModal(openBtn.getAttribute('data-modal-open')); return; }
+    if (e.target.closest('[data-modal-close]')) { e.preventDefault(); closeModal(); return; }
     if (activeModal && e.target === activeModal) closeModal();
   });
 
   // Esc + focus trap
   document.addEventListener('keydown', (e) => {
     if (!activeModal) return;
-
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      closeModal();
-    } else if (e.key === 'Tab') {
-      const f = getFocusable(activeModal);
-      if (f.length === 0) return;
+    if (e.key === 'Escape') { e.preventDefault(); closeModal(); }
+    else if (e.key === 'Tab') {
+      const f = getFocusable(activeModal); if (!f.length) return;
       const first = f[0], last = f[f.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault(); last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault(); first.focus();
-      }
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
+  });
+
+  // Tabs
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-tab]'); if (!btn) return;
+    const panelId = btn.getAttribute('data-tab');
+    const modal = btn.closest('[role="dialog"]');
+    modal.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('bg-neutral-100','dark:bg-neutral-900'));
+    btn.classList.add('bg-neutral-100','dark:bg-neutral-900');
+    modal.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+    const panel = modal.querySelector('#' + panelId);
+    if (panel) panel.classList.remove('hidden');
   });
 })();
 </script>
@@ -239,11 +234,17 @@
             <h3 class="mt-4 font-semibold text-lg">AI‑Driven Monitoring of PhD Student Well‑being</h3>
             <p class="mt-2 text-sm text-neutral-600 dark:text-neutral-400">Hierarchical information extraction and response simulation to infer JD–R factors from chats, emails, calendars, and sensors.</p>
             <!-- <a href="#projects" class="mt-3 inline-flex text-brand-600 dark:text-brand-400 text-sm hover:underline">Learn more →</a> -->
+            <!-- <button
+              class="mt-3 inline-flex text-brand-600 dark:text-brand-400 text-sm hover:underline"
+              data-modal-open="modal-jdr">
+              Learn more →
+            </button> -->
             <button
               class="mt-3 inline-flex text-brand-600 dark:text-brand-400 text-sm hover:underline"
               data-modal-open="modal-jdr">
               Learn more →
             </button>
+
           </article>
           <!-- Card 2 -->
           <article class="group rounded-2xl border border-neutral-200 dark:border-neutral-800 p-5 hover:shadow-mellow transition-shadow bg-white dark:bg-neutral-950 transition-transform duration-150 hover:-translate-y-1 hover:shadow-mellow">
@@ -452,31 +453,172 @@
       </div>
     </section>
     <!-- Modal: JD–R -->
+
+
+    <!-- Modal: JD–R (detail overlay) -->
     <div id="modal-jdr"
-         class="fixed inset-0 z-[60] hidden items-center justify-center p-4"
-         role="dialog" aria-modal="true" aria-labelledby="modal-jdr-title" aria-describedby="modal-jdr-desc">
+         class="fixed inset-0 z-[60] hidden items-center justify-center p-0 md:p-6"
+         role="dialog" aria-modal="true" aria-labelledby="modal-jdr-title">
       <!-- Backdrop -->
       <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-modal-close></div>
     
       <!-- Panel -->
-      <div class="relative w-full max-w-2xl rounded-2xl bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 shadow-mellow">
-        <div class="flex items-start justify-between gap-4 p-5 border-b border-neutral-200 dark:border-neutral-800">
-          <h3 id="modal-jdr-title" class="text-lg font-semibold">AI-Driven Monitoring of PhD Student Well-being</h3>
-          <button class="rounded-lg p-2 hover:bg-neutral-100 dark:hover:bg-neutral-900" data-modal-close aria-label="Close">✕</button>
+      <div class="relative w-full md:max-w-4xl max-h-[90vh] overflow-hidden rounded-2xl
+                  bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 shadow-mellow">
+    
+        <!-- Header -->
+        <div class="sticky top-0 z-10 bg-white dark:bg-neutral-950 border-b border-neutral-200 dark:border-neutral-800">
+          <div class="flex items-start justify-between gap-4 p-4">
+            <div>
+              <h3 id="modal-jdr-title" class="text-lg md:text-xl font-semibold">
+                AI-Driven Monitoring of PhD Student Well-being
+              </h3>
+              <div class="mt-1 flex flex-wrap gap-2 text-xs">
+                <span class="px-2 py-1 rounded-full bg-neutral-100 dark:bg-neutral-900">HCI</span>
+                <span class="px-2 py-1 rounded-full bg-neutral-100 dark:bg-neutral-900">UbiComp</span>
+                <span class="px-2 py-1 rounded-full bg-neutral-100 dark:bg-neutral-900">LLMs</span>
+              </div>
+            </div>
+            <button class="rounded-lg p-2 hover:bg-neutral-100 dark:hover:bg-neutral-900" data-modal-close aria-label="Close">✕</button>
+          </div>
+          <!-- Banner -->
+          <img src="assets/jdr_llm_banner.svg" alt="Project banner"
+               class="w-full h-40 md:h-48 object-cover border-t border-neutral-200 dark:border-neutral-800">
+          <!-- Tabs -->
+          <nav class="flex gap-2 overflow-x-auto p-3 border-t border-neutral-200 dark:border-neutral-800 text-sm">
+            <button class="tab-btn px-3 py-1.5 rounded-xl bg-neutral-100 dark:bg-neutral-900"
+                    data-tab="jdr-overview">Overview</button>
+            <button class="tab-btn px-3 py-1.5 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900"
+                    data-tab="jdr-methods">Methods</button>
+            <button class="tab-btn px-3 py-1.5 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900"
+                    data-tab="jdr-data">Data</button>
+            <button class="tab-btn px-3 py-1.5 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900"
+                    data-tab="jdr-results">Results</button>
+            <button class="tab-btn px-3 py-1.5 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900"
+                    data-tab="jdr-ethics">Ethics & Privacy</button>
+            <button class="tab-btn px-3 py-1.5 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900"
+                    data-tab="jdr-artifacts">Artifacts</button>
+          </nav>
         </div>
-        <div id="modal-jdr-desc" class="p-5 space-y-4 text-sm text-neutral-700 dark:text-neutral-300">
-          <p>Human-centered, context-aware modeling of graduate experience using multimodal signals (mobile/wearable sensing and digital interaction data) with modern LLMs.</p>
-          <ul class="list-disc pl-5 space-y-1">
-            <li>Focus: HCI · UbiComp · human-centered AI</li>
-            <li>Signals: activity/location, schedules, messages, email</li>
-            <li>Methods: multimodal modeling, representation learning, evaluation</li>
-          </ul>
-        </div>
-        <div class="p-5 pt-0 flex items-center justify-end gap-3">
-          <button class="inline-flex items-center gap-2 bg-brand-600 text-white px-4 py-2 rounded-xl hover:bg-brand-700" data-modal-close data-autofocus>Close</button>
-        </div>
+    
+        <!-- Body (scrollable) -->
+        <section class="p-5 overflow-y-auto max-h-[calc(90vh-12rem)] space-y-8">
+    
+          <!-- OVERVIEW -->
+          <div id="jdr-overview" class="tab-panel">
+            <p class="text-neutral-700 dark:text-neutral-300 leading-relaxed">
+              Human-centered, context-aware modeling of graduate experience using
+              <strong>mobile/wearable sensing</strong> and <strong>digital interaction data</strong> with modern LLMs.
+              The system infers Job Demands–Resources (JD–R) factors and surfaces trustworthy insights to support awareness,
+              decision making, and well-being.
+            </p>
+            <ul class="mt-4 grid md:grid-cols-2 gap-3 text-sm text-neutral-600 dark:text-neutral-400">
+              <li>• Focus: HCI · UbiComp · Human-centered AI</li>
+              <li>• Modalities: activity/location, device signals, messages/email, calendars</li>
+              <li>• Modeling: multimodal representation + LLM reasoning</li>
+              <li>• Outcomes: perceived stress, peer support, supervision, infrastructure, intellectual climate</li>
+            </ul>
+          </div>
+    
+          <!-- METHODS -->
+          <div id="jdr-methods" class="tab-panel hidden">
+            <ol class="list-decimal pl-5 space-y-2 text-neutral-700 dark:text-neutral-300 text-sm">
+              <li><strong>Ingestion:</strong> weekly exports from chats/email/calendars; mobile/wearable logs.</li>
+              <li><strong>Preprocessing:</strong> normalization, time-windowing, privacy filters, content redaction.</li>
+              <li><strong>Information Extraction (IE):</strong> LLM prompts summarize salient events and contexts per JD–R topic.</li>
+              <li><strong>Response Simulation (RS):</strong> LLM simulates Likert-scale answers for JD–R sub-questions.</li>
+              <li><strong>Scoring:</strong> aggregate to factor-level scores (stress; peer support; supervision; infrastructure; intellectual climate).</li>
+              <li><strong>Evaluation:</strong> MAE and Spearman correlation against ground truth questionnaires; ablations across modalities.</li>
+            </ol>
+            <p class="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
+              Note: The current pipeline simulates scores directly from weekly sub-question responses; calibration is optional.
+            </p>
+          </div>
+    
+          <!-- DATA -->
+          <div id="jdr-data" class="tab-panel hidden">
+            <div class="grid md:grid-cols-2 gap-4 text-sm text-neutral-700 dark:text-neutral-300">
+              <div>
+                <h4 class="font-medium mb-1">Digital Interaction</h4>
+                <ul class="list-disc pl-5 space-y-1">
+                  <li>Chats (role, tone, frequency patterns)</li>
+                  <li>Email (threads, response cadence)</li>
+                  <li>Calendars (workload, meeting context)</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-medium mb-1">Mobile/Wearable</h4>
+                <ul class="list-disc pl-5 space-y-1">
+                  <li>Activity & steps, sleep/wake windows</li>
+                  <li>Location regularity & transitions</li>
+                  <li>On-device sensing summaries</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+    
+          <!-- RESULTS -->
+          <div id="jdr-results" class="tab-panel hidden">
+            <div class="grid sm:grid-cols-3 gap-4">
+              <div class="rounded-xl border border-neutral-200 dark:border-neutral-800 p-4">
+                <p class="text-xs text-neutral-500 dark:text-neutral-400">Metric</p>
+                <p class="text-lg font-semibold">MAE</p>
+                <p class="text-sm text-neutral-600 dark:text-neutral-400">Placeholder (add values)</p>
+              </div>
+              <div class="rounded-xl border border-neutral-200 dark:border-neutral-800 p-4">
+                <p class="text-xs text-neutral-500 dark:text-neutral-400">Correlation</p>
+                <p class="text-lg font-semibold">Spearman’s ρ</p>
+                <p class="text-sm text-neutral-600 dark:text-neutral-400">Placeholder (add values)</p>
+              </div>
+              <div class="rounded-xl border border-neutral-200 dark:border-neutral-800 p-4">
+                <p class="text-xs text-neutral-500 dark:text-neutral-400">Ablations</p>
+                <p class="text-lg font-semibold">Modalities</p>
+                <p class="text-sm text-neutral-600 dark:text-neutral-400">Chat-only vs +Calendar vs +Sensors</p>
+              </div>
+            </div>
+          </div>
+    
+          <!-- ETHICS -->
+          <div id="jdr-ethics" class="tab-panel hidden">
+            <ul class="list-disc pl-5 space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
+              <li><strong>Consent & Governance:</strong> explicit opt-in, revocation anytime, IRB alignment.</li>
+              <li><strong>Data Minimization:</strong> collect only signals needed for the stated purpose.</li>
+              <li><strong>Privacy:</strong> local redaction, secure storage, least-privilege access.</li>
+              <li><strong>Transparency:</strong> user-facing summaries and explanations for model outputs.</li>
+            </ul>
+          </div>
+    
+          <!-- ARTIFACTS -->
+          <div id="jdr-artifacts" class="tab-panel hidden">
+            <div class="flex flex-wrap gap-3">
+              <a href="assets/CHI26-JDR_LLM__Inferring_Job_Demands_and_Resources_of_PhD_Students_Using_Multimodal_LLM_Based_Framework.pdf"
+                 class="inline-flex items-center gap-2 bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 px-4 py-2 rounded-xl hover:opacity-90">
+                PDF
+              </a>
+              <a href="https://github.com/saferi1023/GradWellbeing-App"
+                 class="inline-flex items-center gap-2 border border-neutral-300 dark:border-neutral-700 px-4 py-2 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-900">
+                Code (App)
+              </a>
+              <a href="#"
+                 class="inline-flex items-center gap-2 border border-neutral-300 dark:border-neutral-700 px-4 py-2 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-900">
+                Slides / Poster
+              </a>
+              <a href="#"
+                 class="inline-flex items-center gap-2 border border-neutral-300 dark:border-neutral-700 px-4 py-2 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-900">
+                BibTeX
+              </a>
+            </div>
+          </div>
+    
+          <!-- Footer actions -->
+          <div class="pt-2 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-end">
+            <button class="mt-3 inline-flex items-center gap-2 bg-brand-600 text-white px-4 py-2 rounded-xl hover:bg-brand-700"
+                    data-modal-close data-autofocus>Close</button>
+          </div>
+        </section>
       </div>
     </div>
+
     
     <!-- Modal: Virtual Patient -->
     <div id="modal-vp"
