@@ -654,11 +654,12 @@
           </div>
     
           <!-- Poster banner (no cropping). Export your PDF to PNG/JPG and place in /assets/ -->
-          <div class="w-full bg-neutral-950 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-center">
+          <div class="w-full bg-neutral-950 border-t border-neutral-200 dark:border-neutral-800">
             <img
-              src="assets/VP-poster.png"   <!-- rename your exported image accordingly -->
+              src="assets/VP-poster.png"
               alt="Virtual Patient System poster"
-              class="w-full h-auto max-h-[50vh] object-contain"
+              width="1023" height="554"                    <!-- intrinsic aspect ratio -->
+              class="block mx-auto w-full h-auto max-h-[60vh] md:max-h-[70vh] object-contain object-center"
               loading="lazy" decoding="async">
           </div>
     
@@ -669,7 +670,7 @@
             <button class="tab-btn px-3 py-1.5 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900" data-tab="vp-signals">Signals & Metrics</button>
             <button class="tab-btn px-3 py-1.5 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900" data-tab="vp-methods">Methods</button>
             <button class="tab-btn px-3 py-1.5 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900" data-tab="vp-study">Study & Future Work</button>
-            <button class="tab-btn px-3 py-1.5 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900" data-tab="vp-artifacts">Artifacts</button>
+           
           </nav>
         </div>
     
