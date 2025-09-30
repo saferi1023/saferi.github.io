@@ -1024,8 +1024,9 @@
     
           <!-- Tabs -->
           <nav class="flex gap-2 overflow-x-auto p-3 border-t border-neutral-200 dark:border-neutral-800 text-sm">
-            <button class="tab-btn px-3 py-1.5 rounded-xl bg-neutral-100 dark:bg-neutral-900" data-tab="csg-overview">Overview</button>
-            <button class="tab-btn px-3 py-1.5 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900" data-tab="csg-hardware">Pipeline</button>
+            <button class="tab-btn px-3 py-1.5 rounded-xl bg-neutral-100 dark:bg-neutral-900" data-tab="t2i-overview">Overview</button>
+            <button class="tab-btn px-3 py-1.5 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-900" data-tab="t2i-hardware">Pipeline</button>
+
         
           </nav>
         </div>
@@ -1036,7 +1037,7 @@
         <section class="p-5 overflow-y-auto max-h-[calc(90vh-14rem)] space-y-8">
     
           <!-- OVERVIEW -->
-          <div id="csg-overview" class="tab-panel">
+          <div id="t2i-overview" class="tab-panel">
             <p class="text-neutral-700 dark:text-neutral-300 leading-relaxed">
               Human Activity Recognition (HAR) research relies heavily on inertial measurement unit (IMU) data, yet collecting large, diverse, and labeled datasets remains costly and labor-intensive. The scarcity of publicly available IMU datasets limits reproducibility, scalability, and exploration of novel activity scenarios. To address this challenge, we present Text2IMU: Generating Realistic Inertial Sensor Data from Natural-Language Activity Descriptions. Text2IMU converts short textual activity prompts into realistic IMU signals through a multi-stage process: (1) translating natural-language descriptions into 3D motion sequences using a text-to-motion model, (2) mapping motion trajectories into joint kinematics, and (3) simulating IMU signals such as accelerometer and gyroscope outputs, calibrated to reflect real-world noise characteristics. This framework enables the generation of flexible, on-demand sensor data without requiring physical recordings. By augmenting existing datasets and creating synthetic benchmarks, Text2IMU provides an effective pathway to overcome data scarcity in HAR and supports the development of more robust recognition models.
             </p>
