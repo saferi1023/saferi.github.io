@@ -563,7 +563,7 @@
 
     <!-- Education -->
     <!-- Education -->
-    <section id="education" class="py-16 md:py-24 border-t border-neutral-200/70 dark:border-neutral-800">
+    <section id="education" style="--tl:72%;" class="py-16 md:py-24 border-t border-neutral-200/70 dark:border-neutral-800">
       <div class="max-w-6xl mx-auto px-4">
         <div class="flex items-end justify-between flex-wrap gap-4">
           <h2 class="font-display text-2xl md:text-3xl font-bold">Education</h2>
@@ -571,21 +571,23 @@
         </div>
     
         <!-- Timeline -->
-        <ol class="relative mt-10 space-y-8 before:absolute before:inset-y-0 before:left-4 md:before:left-1/2 before:w-px before:bg-neutral-200 dark:before:bg-neutral-800">
+        <ol class="relative mt-10 space-y-8 before:absolute before:inset-y-0 before:left-4 md:before:left-[var(--tl)] before:w-px before:bg-neutral-200 dark:before:bg-neutral-800">
           <!-- PhD -->
-          <li class="relative md:grid md:grid-cols-2 md:gap-10">
+          <li class="relative md:grid md:grid-cols-12 md:gap-10">
             <!-- Dot -->
-            <span class="absolute left-4 md:left-1/2 -translate-x-1.5 top-1 h-3 w-3 rounded-full bg-gradient-to-br from-brand-500 to-amber-500 ring-4 ring-white dark:ring-neutral-950"></span>
+            <span class="absolute left-4 md:left-[var(--tl)] -translate-x-1.5 top-1 h-3 w-3 rounded-full
+             bg-gradient-to-br from-brand-500 to-amber-500 ring-4 ring-white dark:ring-neutral-950"></span>
+
     
             <!-- Left (meta) -->
-            <div class="md:text-right pr-8 md:pr-0 md:order-1">
+            <div class="md:col-span-4 md:col-start-9 md:pl-12 md:text-right">
               <p class="text-xs uppercase tracking-widest text-neutral-500 dark:text-neutral-400">2022 — Present</p>
               <p class="mt-1 font-medium">Florida State University</p>
               <p class="text-sm text-neutral-600 dark:text-neutral-400">Tallahassee, FL</p>
             </div>
     
             <!-- Right (card) -->
-            <div class="mt-3 md:mt-0">
+            <div class="mt-3 md:mt-0 md:col-span-8 md:pr-12">
               <div class="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-5 bg-white/60 dark:bg-neutral-950/60 backdrop-blur">
                 <div class="flex items-start justify-between gap-4">
                   <div>
@@ -640,16 +642,16 @@
           </li>
     
           <!-- Master’s -->
-          <li class="relative md:grid md:grid-cols-2 md:gap-10">
-            <span class="absolute left-4 md:left-1/2 -translate-x-1.5 top-1 h-3 w-3 rounded-full bg-neutral-400 ring-4 ring-white dark:ring-neutral-950"></span>
+          <li class="relative md:grid md:grid-cols-12 md:gap-10">
+            <span class="absolute left-4 md:left-[var(--tl)] -translate-x-1.5 top-1 h-3 w-3 rounded-full bg-neutral-400 ring-4 ring-white dark:ring-neutral-950"></span>
     
-            <div class="md:text-right pr-8 md:pr-0 md:order-1">
+            <div class="md:col-span-4 md:col-start-9 md:pl-12 md:text-right">
               <p class="text-xs uppercase tracking-widest text-neutral-500 dark:text-neutral-400">2022 — 2024</p>
               <p class="mt-1 font-medium">Florida State University</p>
               <p class="text-sm text-neutral-600 dark:text-neutral-400">Tallahassee, FL</p>
             </div>
     
-            <div class="mt-3 md:mt-0">
+            <div class="mt-3 md:mt-0 md:col-span-8 md:pr-12">
               <div class="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-5">
                 <div class="flex items-start justify-between gap-4">
                   <div>
@@ -717,16 +719,16 @@
           </li>
     
           <!-- Bachelor’s -->
-          <li class="relative md:grid md:grid-cols-2 md:gap-10">
-            <span class="absolute left-4 md:left-1/2 -translate-x-1.5 top-1 h-3 w-3 rounded-full bg-neutral-400 ring-4 ring-white dark:ring-neutral-950"></span>
+          <li class="relative md:grid md:grid-cols-12 md:gap-10">
+            <span class="absolute left-4 md:left-[var(--tl)] -translate-x-1.5 top-1 h-3 w-3 rounded-full bg-neutral-400 ring-4 ring-white dark:ring-neutral-950"></span>
     
-            <div class="md:text-right pr-8 md:pr-0 md:order-1">
-              <p class="text-xs uppercase tracking-widest text-neutral-500 dark:text-neutral-400">2024</p>
+            <div class="md:col-span-4 md:col-start-9 md:pl-12 md:text-right">
+              <p class="text-xs uppercase tracking-widest text-neutral-500 dark:text-neutral-400">2016-2020</p>
               <p class="mt-1 font-medium">BRAC University</p>
               <p class="text-sm text-neutral-600 dark:text-neutral-400">Dhaka, Bangladesh</p>
             </div>
     
-            <div class="mt-3 md:mt-0">
+            <div class="mt-3 md:mt-0 md:col-span-8 md:pr-12">
               <div class="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-5">
                 <div class="flex items-start justify-between gap-4">
                   <div>
